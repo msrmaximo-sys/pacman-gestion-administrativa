@@ -65,7 +65,7 @@ Los informes se muestran siempre en terminal y solo se guardan en `informes/` si
 
 ## Alcance y límites
 
-Los punteros son **números de registro**, no direcciones de RAM. El proyecto utiliza clases e instancias, pero no una jerarquía propia de herencia. Python administra la memoria de sus objetos.
+Los punteros son **números de registro**. El proyecto utiliza clases e instancias, pero no una jerarquía propia de herencia. Python administra la memoria de sus objetos.
 
 Los inicios se escriben antes de jugar. Los eventos se acumulan en RAM y se guardan después del retorno normal del juego; el resultado se guarda al final. No hay recuperación de partidas interrumpidas ni transacciones para operaciones de varias escrituras. Se contempla una instancia del programa a la vez.
 
