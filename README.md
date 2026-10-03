@@ -1,21 +1,41 @@
-# Pac-Man y gestión administrativa
+# Pac-Man con gestión administrativa
 
-Proyecto educativo realizado por **cuatro compañeros con autoría colectiva y participación de igual valor**, con asistencia de IA permitida. Este repositorio conserva la versión final y documenta el flujo, las decisiones, la POO, las estructuras de datos y la persistencia para estudiar y defender el código. No se publican identidades ni se atribuyen módulos a personas.
+Proyecto académico desarrollado entre cuatro compañeros como trabajo de facultad. Integra un juego inspirado en Pac-Man, realizado con Python y Pygame, con un sistema de gestión de usuarios, partidas, colisiones e informes.
 
-El juego utiliza Python y Pygame. La administración funciona en terminal: usuarios, partidas, historial de contactos, puntajes, ranking y matrices. Los datos se conservan en archivos de registros de longitud fija, mediante `seek()` y cadenas por usuario.
+## Contexto y propósito
 
-## Documentación para estudiar
+La propuesta del trabajo fue desarrollar un videojuego con Pygame e incorporar una gestión administrativa que permitiera registrar y consultar lo ocurrido en las partidas. El proyecto reúne programación orientada a objetos, manejo de archivos, acceso directo mediante punteros lógicos, vectores y matrices en una aplicación completa.
 
-1. [Guía de defensa oral](docs/GUIA_DEFENSA.md): arquitectura, recorrido de una partida, POO, memoria, movimiento y preguntas.
-2. [Datos, bytes y seek](docs/DATOS_Y_SEEK.md): campos, fórmulas, enlaces y ejemplos resueltos.
-3. [Relación con las consignas](docs/CONSIGNAS_Y_DECISIONES.md): requisitos, implementación, adaptaciones y aspectos por confirmar.
-4. [Historia colectiva](docs/HISTORIA_Y_EQUIPO.md): contexto confirmado y reconstrucción de decisiones sin inventar una cronología.
-5. [Repositorio privado](docs/REPOSITORIO.md): comandos que ejecutará el usuario.
-6. [Verificación](docs/VERIFICACION.md): alcance y resultados de las comprobaciones.
+El desarrollo pasó por distintos prototipos hasta llegar a esta versión final. Las tareas se distribuyeron entre los cuatro integrantes y el resultado se presenta como un trabajo de autoría colectiva, con igual reconocimiento para todos.
 
-## Instalación y ejecución
+El uso de herramientas de inteligencia artificial estuvo permitido como apoyo al desarrollo. La definición de los problemas, la elección de soluciones y la comprensión de los métodos utilizados formaron parte del trabajo del equipo.
 
-Se requiere Python 3 y un entorno gráfico. `requirements.txt` fija `pygame-ce==2.5.8`, importado como `pygame`. Las otras dependencias son módulos de la biblioteca estándar. No aparecen otros frameworks ni un gestor de base de datos en esta versión.
+## Enfoque del proyecto
+
+La gestión administrativa parte de una propuesta de palas y pelotas, adaptada a la dinámica de Pac-Man. Los usuarios, las partidas y los contactos entre objetos se relacionan para producir un historial consultable, totales de puntajes, rankings y matrices de actividad.
+
+La implementación combina clases para representar los personajes con módulos de funciones para los archivos y las consultas. Pygame proporciona la ventana, los eventos y el dibujo; el código del proyecto define el movimiento, las reglas y la organización de los datos.
+
+Las principales decisiones técnicas son:
+
+- **Registros de longitud fija:** permiten calcular la posición de un registro a partir de su número y acceder con `seek()`. Los anchos se definen en bytes para conservar posiciones consistentes.
+- **Listas enlazadas en archivos:** el maestro de usuarios conserva los extremos de cada historial y las colisiones incluyen enlaces al registro anterior y siguiente. Estos punteros representan números de registro.
+- **Estado en memoria y persistencia en disco:** posiciones, alimentos y eventos se mantienen en RAM durante la partida; los archivos conservan los inicios y los resultados entre ejecuciones. Los eventos se escriben al finalizar normalmente.
+- **Matrices para las consultas:** los contactos se agrupan por objetos, fechas y partidas. La presentación se organiza en tablas que permiten consultar los totales sin modificar el orden físico de los registros.
+
+## Funcionalidades
+
+- Movimiento por un laberinto con pellets, poderes y cuatro enemigos.
+- Registro de usuarios e inicio de sesión.
+- Puntajes separados por alimentos y enemigos.
+- Persistencia en archivos de registros de longitud fija.
+- Historial de colisiones mediante listas enlazadas por usuario.
+- Informes de partidas, movimientos, puntajes y ranking.
+- Matrices de contactos, calendario e intervenciones por partida, mes y objeto.
+
+## Instalación
+
+Requiere Python 3 y un entorno gráfico. La dependencia externa es `pygame-ce==2.5.8`, importada como `pygame`.
 
 Desde la carpeta del proyecto, en PowerShell:
 
@@ -25,62 +45,68 @@ python -m venv .venv
 .\.venv\Scripts\python.exe main.py
 ```
 
-En un clon limpio, el programa crea `datos/` y sus cuatro archivos con encabezados. Registrar un usuario desde el menú y luego iniciar sesión o elegir Jugar. Registrar no inicia automáticamente la sesión. Los datos de uso, los informes y los respaldos se excluyen de Git.
+Al iniciar se crean los archivos de datos faltantes. Desde el menú se puede registrar un usuario, iniciar sesión, jugar y acceder a las consultas administrativas.
 
-## Cómo se juega
+## Controles y reglas
 
-- Ventana de 1280 × 900, con dibujo limitado a 60 FPS.
-- W, A, S, D solicitan una dirección. Una pulsación mantiene el movimiento; un giro bloqueado queda pendiente hasta que haya camino.
-- Cada pellet suma 10 a A. El power activa siete segundos de poder; comer un enemigo suma 200 a B.
-- Se gana al consumir todos los pellets y powers. Chocar sin poder o cerrar la ventana termina en derrota. Cerrar no inventa un evento de choque.
-- Los enemigos eligen vecinos transitables al azar; no implementan persecución ni IA generativa.
+| Acción | Control o comportamiento |
+| --- | --- |
+| Movimiento | W, A, S, D |
+| Giro bloqueado | Se intenta nuevamente al llegar a un camino válido |
+| Pellet | Suma 10 al puntaje A |
+| Power | Activa poder durante 7 segundos |
+| Enemigo comido con poder | Suma 200 al puntaje B |
+| Victoria | Consumir todos los pellets y powers |
+| Derrota | Contacto con un enemigo sin poder o cierre de la ventana |
 
-## Estructura
+Los enemigos eligen caminos vecinos al azar. La ventana mide 1280 × 900 y el dibujo se limita a 60 FPS.
+
+## Organización del código
 
 | Módulo | Responsabilidad |
 | --- | --- |
-| `main.py` | Menú, sesión y coordinación del guardado |
-| `config.py` | Constantes y contratos de campos |
-| `archivos_fijos.py` | Codificación, validación y posiciones en bytes |
-| `usuarios.py` | Altas, autenticación y maestro |
-| `partidas.py` | Inicios y resultados |
-| `colisiones.py` | Eventos y cadenas enlazadas por usuario |
-| `laberinto.py` | Tablero y caminos transitables |
-| `objetos.py` | Clases Jugador y Enemigo y movimiento visual |
-| `juego.py` | Entrada, simulación, contactos y dibujo |
-| `informes.py` | Consultas, tablas, ranking y matrices |
+| `main.py` | Menú, sesión y coordinación de la partida |
+| `config.py` | Constantes y definición de campos |
+| `archivos_fijos.py` | Codificación, validación y acceso mediante seek |
+| `usuarios.py` | Registro y autenticación |
+| `partidas.py` | Numeración y resultados |
+| `colisiones.py` | Eventos y enlaces del historial |
+| `laberinto.py` | Tablero y caminos |
+| `objetos.py` | Clases Jugador y Enemigo |
+| `juego.py` | Entrada, movimiento, contactos y dibujo |
+| `informes.py` | Consultas, tablas y matrices |
 
-## Datos y consultas
+## Persistencia
 
-| Archivo | Bytes por registro, incluido LF |
+Los archivos usan campos de longitud fija en bytes UTF-8, un separador por campo y un salto LF. Cada encabezado ocupa el mismo tamaño que un registro.
+
+| Archivo | Bytes por registro |
 | --- | ---: |
 | `maestro_usuarios.txt` | 68 |
 | `acumulador_partidas.txt` | 22 |
 | `partida_jugador.txt` | 60 |
 | `colisiones.txt` | 133 |
 
-Cada archivo comienza con un encabezado del mismo tamaño que un registro. Los anchos se miden en bytes UTF-8. Se abre en binario para conservar offsets y LF de un byte. No reordenar ni editar manualmente los datos: los códigos y enlaces dependen de las posiciones físicas.
+El acceso directo utiliza `seek()`. El maestro conserva el inicio y final de la cadena de cada usuario; las colisiones guardan los números de registro anterior y siguiente. Los informes ordenan los datos en memoria sin cambiar las posiciones físicas.
 
-Los informes se muestran siempre en terminal y solo se guardan en `informes/` si se responde `s`. El menú administrativo incluye padrón, partidas, movimientos, puntajes y ranking. Las matrices cuentan contactos entre objetos, eventos por día y mes, y participaciones por partida, mes y objeto. Un contacto equivale a dos participaciones; no son puntos.
+Los datos de ejecución y los informes generados no se incluyen en el repositorio. Cada instalación comienza con sus propios usuarios e historial.
 
-## Alcance y límites
+## Informes
 
-Los punteros son **números de registro**, no direcciones de RAM. El proyecto utiliza clases e instancias, pero no una jerarquía propia de herencia. Python administra la memoria de sus objetos.
+Las consultas se muestran en terminal y pueden guardarse como texto al responder `s`. Incluyen padrón de usuarios, detalle de partidas, movimientos, puntajes generales y ranking.
 
-Los inicios se escriben antes de jugar. Los eventos se acumulan en RAM y se guardan después del retorno normal del juego; el resultado se guarda al final. No hay recuperación de partidas interrumpidas ni transacciones para operaciones de varias escrituras. Se contempla una instancia del programa a la vez.
+Las matrices permiten consultar contactos entre objetos, eventos por día y mes y participaciones por partida, mes y objeto. Cada contacto genera dos participaciones, una por objeto.
 
-El padrón conserva y muestra claves en texto plano, como el modelo administrativo aportado. No es autenticación para producción; los datos actuales se mantienen fuera del repositorio, incluso privado.
-
-La versión adapta una consigna de palas y pelotas a Pac-Man. Ver las diferencias en [consignas y decisiones](docs/CONSIGNAS_Y_DECISIONES.md); esta documentación no certifica aprobación docente.
-
-## Comprobación aislada
+## Verificación
 
 ```powershell
 python -B tools/verificar_modelo.py
 ```
 
-Utiliza datos ficticios en una carpeta temporal; no modifica `datos/` ni sustituye una prueba manual de jugabilidad.
+Las pruebas usan datos ficticios en una carpeta temporal y comprueban tamaños y offsets, enlaces, numeración, matrices y movimiento lógico y visual. No modifican los datos de ejecución.
 
-## Autoría y evolución
+## Limitaciones
 
-El equipo indicó que hubo prototipos previos. La copia revisada no los incluía ni tenía historial Git. El futuro primer commit representa esta versión final; no reconstruye fechas ni contribuciones individuales. El repositorio será privado y sus comandos los ejecutará el usuario. La licencia queda para acuerdo colectivo.
+El programa está previsto para una instancia a la vez. Reserva el inicio de una partida antes de jugar y guarda sus eventos y resultado al finalizar normalmente. No implementa transacciones ni recuperación de partidas interrumpidas.
+
+Las claves se almacenan en texto plano y aparecen en el padrón. La autenticación corresponde al alcance de un proyecto educativo local, no a un servicio de producción.

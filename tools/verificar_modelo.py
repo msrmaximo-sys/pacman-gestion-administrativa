@@ -1,4 +1,4 @@
-"""Comprobación didáctica aislada: no modifica los datos del grupo."""
+"""Pruebas aisladas del modelo: no modifican los datos de ejecución."""
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
